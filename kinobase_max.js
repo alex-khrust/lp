@@ -1,16 +1,49 @@
 (function () {
     'use strict';
 
-    function startPlugin() {
-        var menu_item = {
-            title: 'Kinobase Test',
-            icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="white" fill-opacity="0.1"/><path d="M21 7L9 19L3.5 13.5L4.91 12.09L9 16.17L19.59 5.58L21 7Z" fill="white"/></svg>',
-            onSelect: function () {
-                Lampa.Noty.show('Плагин работает!');
-            }
+    function KinobaseComponent(object) {
+        var network = new Lampa.Reguest();
+        var scroll  = new Lampa.Scroll({mask: true, over: true});
+        var html    = $('<div></div>');
+        
+        this.create = function () {
+            var _this = this;
+            this.activity.loader(true);
+            setTimeout(function() {
+                var card = Lampa.Template.get('card', {
+                    title: 'Связь установлена',
+                    description: object.title,
+                    card_id: 'kb_info'
+                });
+                html.append(card);
+                _this.activity.loader(false);
+                _this.activity.toggle();
+            }, 500);
+            return this.render();
         };
+        this.render = function () { return html; };
+        this.destroy = function () { network.clear(); scroll.destroy(); html.remove(); };
+    }
 
-        Lampa.Menu.add(menu_item);
+    function startPlugin() {
+        if (window.plugin_kinobase_ready) return;
+        window.plugin_kinobase_ready = true;
+
+        // Регистрируем компонент
+        Lampa.Component.add('kinobase_max', KinobaseComponent);
+
+        // Добавляем в меню
+        Lampa.Menu.add({
+            title: 'Кинобаза',
+            icon: '<svg height="36" viewBox="0 0 24 24" width="36" xmlns="http://www.w3.org/2000/svg"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z" fill="#ffcc00"/></svg>',
+            onSelect: function () {
+                Lampa.Activity.push({
+                    url: 'https://kinobase.org/films',
+                    title: 'Фильмы',
+                    component: 'kinobase_max'
+                });
+            }
+        });
     }
 
     if (window.appready) startPlugin();
