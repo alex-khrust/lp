@@ -7,7 +7,7 @@ Lampa.Plugins.add({
     content: [
         {
             name: 'sections',
-            title: 'Разделы',
+            title: 'Разделы Kinobase',
             rows: [
                 { title: 'Фильмы', url: 'https://kinobase.org/films' },
                 { title: 'Сериалы', url: 'https://kinobase.org/serials' },
@@ -19,27 +19,42 @@ Lampa.Plugins.add({
         }
     ],
     onStart: function() {
-        this.content[0].rows.forEach(row => {
-            Lampa.Menu.add({
-                title: row.title,
-                icon: 'movie',
-                onSelect: () => {
+        try {
+            // Добавляем разделы в меню
+            this.content[0].rows.forEach(row => {
+                Lampa.Menu.add({
+                    title: row.title,
+                    icon: 'movie',
+                    onSelect: () => {
+                        try {
+                            Lampa.Activity.push({
+                                title: row.title,
+                                component: 'webview',
+                                url: row.url
+                            });
+                        } catch(e) {
+                            console.error('Ошибка открытия раздела:', e);
+                        }
+                    }
+                });
+            });
+
+            // Поиск
+            Lampa.Listener.follow('search', search => {
+                try {
+                    const query = encodeURIComponent(search.query);
                     Lampa.Activity.push({
-                        title: row.title,
+                        title: `Поиск: ${search.query}`,
                         component: 'webview',
-                        url: row.url
+                        url: `https://kinobase.org/search?query=${query}`
                     });
+                } catch(e) {
+                    console.error('Ошибка поиска:', e);
                 }
             });
-        });
 
-        Lampa.Listener.follow('search', search => {
-            const query = encodeURIComponent(search.query);
-            Lampa.Activity.push({
-                title: `Поиск: ${search.query}`,
-                component: 'webview',
-                url: `https://kinobase.org/search?query=${query}`
-            });
-        });
+        } catch(err) {
+            console.error('Ошибка инициализации плагина Kinobase:', err);
+        }
     }
 });
