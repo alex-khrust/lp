@@ -1,5 +1,5 @@
 (function () {
     'use strict';
-    // Загружаем основной движок поиска через асинхронный метод Lampa
+    // Загружаем основной код без блокировки интерфейса
     Lampa.Utils.putScriptAsync(['https://raw.githubusercontent.com/alex-khrust/lp/main/tv_show.js'], function () { });
 })();
