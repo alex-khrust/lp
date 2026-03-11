@@ -19,20 +19,17 @@ Lampa.Plugins.add({
         }
     ],
     onStart: function() {
-        const self = this;
-        this.content.forEach(section=>{
-            section.rows.forEach(row=>{
-                Lampa.Menu.add({
-                    title: row.title,
-                    icon: 'movie',
-                    onSelect: () => {
-                        Lampa.Activity.push({
-                            title: row.title,
-                            component: 'webview',
-                            url: row.url
-                        });
-                    }
-                });
+        this.content[0].rows.forEach(row => {
+            Lampa.Menu.add({
+                title: row.title,
+                icon: 'movie',
+                onSelect: () => {
+                    Lampa.Activity.push({
+                        title: row.title,
+                        component: 'webview',
+                        url: row.url
+                    });
+                }
             });
         });
 
