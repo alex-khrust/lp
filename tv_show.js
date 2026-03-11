@@ -5,7 +5,6 @@
         if (window.plugin_tv_show_ready) return;
         window.plugin_tv_show_ready = true;
 
-        // Регистрируем компонент страницы (безопасный метод)
         Lampa.Component.add('tv_page', function (object, exam) {
             this.create = function () {
                 Lampa.Input.edit({
@@ -31,7 +30,6 @@
             this.destroy = function () {};
         });
 
-        // Добавляем пункт в боковое меню
         Lampa.Menu.add({
             id: 'tv_shows_item',
             title: 'ТВ Шоу',
@@ -47,11 +45,6 @@
         });
     }
 
-    // Ожидание готовности приложения
     if (window.appready) startPlugin();
-    else {
-        Lampa.Listener.follow('app', function (e) {
-            if (e.type == 'ready') startPlugin();
-        });
-    }
+    else Lampa.Listener.follow('app', function (e) { if (e.type == 'ready') startPlugin(); });
 })();
